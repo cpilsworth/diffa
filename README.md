@@ -1,9 +1,9 @@
-# Your Project's Title...
-Your project's description...
+# diffa.co.uk
+Personal website project
 
 ## Environments
-- Preview: https://main--{repo}--{owner}.hlx.page/
-- Live: https://main--{repo}--{owner}.hlx.live/
+- Preview: https://main--diffa--cpilsworth.hlx.page/
+- Live: https://main--diffa--cpilsworth.hlx.live/
 
 ## Installation
 
