@@ -17,9 +17,11 @@ export default async function decorate(block) {
   if (resp.ok) {
     const html = await resp.text();
 
+
+
     // decorate footer DOM
     const footer = document.createElement('div');
-    footer.innerHTML = html;
+    footer.innerHTML = html + ` ${placeholders.copyright}`;
 
     decorateIcons(footer);
     block.append(footer);
