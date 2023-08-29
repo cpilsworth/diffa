@@ -145,7 +145,7 @@ header .nav-brand {
   font-size: var(--heading-font-size-s);
   font-weight: 700;
   line-height: 1;
-  margin-right: auto;
+  margin-right: auto; 
 }
 
 header nav .nav-brand img {
