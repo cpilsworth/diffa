@@ -9,7 +9,6 @@ export default async function decorate(block) {
   block.textContent = '';
 
   const placeholders = await fetchPlaceholders();
-  console.dir(placeholders);
   // fetch footer content
   const footerPath = cfg.footer || '/footer';
   const resp = await fetch(`${footerPath}.plain.html`, window.location.pathname.endsWith('/footer') ? { cache: 'reload' } : {});
@@ -17,11 +16,9 @@ export default async function decorate(block) {
   if (resp.ok) {
     const html = await resp.text();
 
-
-
     // decorate footer DOM
     const footer = document.createElement('div');
-    footer.innerHTML = html + ` ${placeholders.copyright}`;
+    footer.innerHTML = html;
 
     decorateIcons(footer);
     block.append(footer);
