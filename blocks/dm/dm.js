@@ -4,7 +4,7 @@ function addStyle() {
     let doc = iframe.contentDocument || iframe.contentWindow.document;
     let style = document.createElement('style');
     style.innerHTML = `
-        button..vjs-big-play-button {
+        button.vjs-big-play-button {
             color: hotpink;
         }`;
     doc.head.appendChild(style);
