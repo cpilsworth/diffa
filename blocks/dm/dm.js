@@ -1,13 +1,14 @@
 
 function addStyle() {
-    let iframe = this;
-    let doc = iframe.contentDocument || iframe.contentWindow.document;
-    let style = document.createElement('style');
-    style.innerHTML = `
-        button.vjs-big-play-button {
-            color: hotpink;
-        }`;
-    doc.head.appendChild(style);
+    var videoStyle = {
+        "name": "video-style",
+        "css": "https://unpkg.com/@videojs/themes@1/dist/city/index.css"
+    };
+    window.addEventListener("message", function (event) {
+        if(event.data.name === "video-style") {
+            event.source.window.postMessage(JSON.stringify(videoStyle), '*');
+        }
+    });
 }  
 
 export default function decorate(block) {
