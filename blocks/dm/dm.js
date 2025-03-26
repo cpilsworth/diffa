@@ -1,3 +1,14 @@
+
+function addStyle() {
+    let iframe = this;
+    let doc = iframe.contentDocument;
+    let style = document.createElement('style');
+    style.innerHTML = `
+        button..vjs-big-play-button {
+            color: hotpink;
+        }`;
+}  
+
 export default function decorate(block) {
     const link = block.querySelector('a').href;
     block.textContent = '';
@@ -6,6 +17,7 @@ export default function decorate(block) {
         let url = new URL(link); // check link is valid
         
         let iframe = document.createElement('iframe');
+        iframe.addEventListener('load', addStyle);
         iframe.src = link;
         iframe.width = '100%';
         iframe.height = '100%';        
