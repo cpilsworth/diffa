@@ -5,9 +5,9 @@ function addStyle() {
         "css": "https://unpkg.com/@videojs/themes@1/dist/city/index.css"
     };
     window.addEventListener("message", function (event) {
-        if(event.data.name === "video-style") {
+        // if(event.data.name === "video-style") {
             event.source.window.postMessage(JSON.stringify(videoStyle), '*');
-        }
+        // }
     });
 }  
 
