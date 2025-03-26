@@ -7,6 +7,7 @@ function addStyle() {
         button..vjs-big-play-button {
             color: hotpink;
         }`;
+    doc.head.appendChild(style);
 }  
 
 export default function decorate(block) {
