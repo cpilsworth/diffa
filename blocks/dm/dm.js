@@ -1,7 +1,7 @@
 
 function addStyle() {
     let iframe = this;
-    let doc = iframe.contentDocument;
+    let doc = iframe.contentDocument || iframe.contentWindow.document;
     let style = document.createElement('style');
     style.innerHTML = `
         button..vjs-big-play-button {
