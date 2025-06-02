@@ -138,7 +138,19 @@
             const assetSelectorProps = {
                 "onClose": onClose,
                 "handleSelection": handleSelection,
-                imsOrg:"528D65B156D673FA7F000101@AdobeOrg"
+                imsOrg:"528D65B156D673FA7F000101@AdobeOrg",
+                filterSchema: [
+                    {
+                        header: 'Tags',
+                        groupKey: 'TagGroup',
+                        fields: [
+                            {
+                                element: 'taggroup',
+                                name: 'property=xcm:keywords.id='
+                            }
+                        ]
+                    }
+                ]
             }
 
             // Get the container element where the asset selector will be rendered.
