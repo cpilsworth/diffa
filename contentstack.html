@@ -1,0 +1,207 @@
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<script src="https://www.contentstack.com/sdks/contentstack-ui-extensions/dist/latest/ui-extension-sdk.js"></script>
+<link href="https://www.contentstack.com/sdks/contentstack-ui-extensions/dist/latest/ui-extension-sdk.css" rel="stylesheet" type="text/css" media="all">
+<script src="https://experience.adobe.com/solutions/CQ-assets-selectors/static-assets/resources/assets-selectors.js"></script>
+    <script>
+		let imsInstance = null;
+
+        const imsProps = {
+            imsClientId: "aemcs-adobedemoemea78-assetselector",
+            imsScope: "AdobeID,openid,additional_info.projectedProductContext,read_organizations",
+            redirectUrl: window.location.href,
+            modalMode: true,
+            aemTierType : ['delivery'],
+            // Optional parameters:
+            // modalMode: false, // set to false to open in a full page reload flow
+            // adobeImsOptions: {
+            //     modalSettings: {
+            //         allowOrigin: window.location.origin,
+            //     },
+            //     useLocalStorage: true,
+            // },
+            // onImsServiceInitialized: (service) => {
+            //     console.log("onImsServiceInitialized", service);
+            // },
+            // onAccessTokenReceived: (token) => {
+            //     console.log("onAccessTokenReceived", token);
+            // },
+            // onAccessTokenExpired: () => {
+            //     console.log("onAccessTokenError");
+            //     // re-trigger sign-in flow
+            // },
+            // onErrorReceived: (type, msg) => {
+            //     console.log("onErrorReceived", type, msg);
+            // },
+        };
+
+        /**
+         * Registers the IMS token service with the PureJSSelectors library, which is required when using `renderAssetSelectorWithAuthFlow` with a pop-up.
+         *
+         * NOTE: If you don't register the token service and your redirectUrl does not match the one you registered with the imsClientId,
+         * the sign-in flow will fail and a page reload might be required. If you use a different redirectUrl where the IMS provider will
+         * redirect to after the user signs in, you must also load this function on that redirect page for the pop-up to work correctly.
+         *
+         * It is recommended that you call `registerAssetsSelectorsAuthService` on page load.
+         *
+         * @function load
+         */
+        function registerImsAuthService() {
+            // Register the IMS token service with PureJSSelectors.
+            const registeredTokenService = PureJSSelectors.registerAssetsSelectorsAuthService(imsProps);
+
+            // Store the token service instance in `imsInstance` for use outside of the asset selector.
+            // Some helpful functions:
+            // - registeredTokenService.getAccessToken() - to get the current access token
+            // - registeredTokenService.triggerAuthFlow() or registeredTokenService.signIn() - to trigger the sign-in flow based on the imsProps modalMode setting (true/false);
+            // - registeredTokenService.signOut() - to sign out the user and remove the token
+            // - registeredTokenService.refreshToken() - to refresh the existing token
+            imsInstance = registeredTokenService;
+        };
+
+		// Must be register token service before the selectors are rendered.
+		registerImsAuthService();
+
+        /**
+         * Closes the Asset Selector dialog when it is called.
+         * This is a helper function used by Asset Selectors UI.
+         *
+         * @function onClose
+         */
+        function onClose() {
+            const selectorDialog = document.getElementById('asset-selector-dialog');
+            selectorDialog.close();
+        }
+
+        /**
+         * Closes the Destination Selector dialog when it is called.
+         * This is a helper function used by Asset Selectors UI.
+         *
+         * @function onClose
+         */
+        function destinationSelectorOnClose() {
+            const selectorDialog = document.getElementById('destination-selector-dialog');
+            selectorDialog.close();
+        }
+
+        /**
+         * Handles the selected asset when it is called.
+         * This is a helper function used by Asset Selectors UI.
+         *
+         * @function handleSelection
+         * @param {object} selection - The selected asset.
+         */
+        function handleSelection(selection) {
+            console.log('Selected asset:', selection);
+            onClose();
+        };
+
+        /**
+         * Handles the selected path when it is called.
+         * This is a helper function used by Asset Selectors UI.
+         *
+         * @function handleOnConfirm
+         * @param {object} selection - The selected path.
+         */
+        function handleOnConfirm(selection) {
+            console.log('Selected path:', selection);
+            destinationSelectorOnClose();
+        };
+
+        /**
+         * Renders an asset selector user interface using the PureJSSelectors library.
+         * When the asset selector is ready to be displayed, it will be shown in a dialog box.
+         *
+         * @async
+         * @function renderAssetSelectorWithImsFlow
+         * @returns {Promise<void>}
+         */
+        async function renderAssetSelectorWithImsFlow() {
+
+            /**
+             * Props for the asset selector UI.
+             *
+             * @typedef {Object} AssetSelectorProps
+             * @property {string} discoveryURL - The URL for the AEM Discovery service.
+             * @property {string} imsOrg - The IMS organization ID for the user.
+             * @property {string} apiKey - The API key for the AEM Assets backend.
+             * @property {Function} onClose - A callback function to be called when the asset selector dialog is closed.
+             * @property {Function} handleSelection - A callback function to be called when an asset is selected.
+             * @property {Function} handleNavigateToAsset - A callback function to be called when the user clicks on an asset to navigate to it.
+             * @property {string} env - The environment where the asset selector is being used.
+             */
+
+            /** @type {AssetSelectorProps} */
+            const assetSelectorProps = {
+                "onClose": onClose,
+                "handleSelection": handleSelection,
+                imsOrg:"528D65B156D673FA7F000101@AdobeOrg",
+                filterSchema: [
+                    {
+                        header: 'Tags',
+                        groupKey: 'TagGroup',
+                        fields: [
+                            {
+                                element: 'taggroup',
+                                name: 'property=xcm:keywords.id='
+                            }
+                        ]
+                    }
+                ]
+            }
+
+            // Get the container element where the asset selector will be rendered.
+            const container = document.getElementById('asset-selector');
+
+            /**
+             * Renders the asset selector UI with IMS authentication, and shows the dialog when it's ready.
+             *
+             * @function renderAssetSelectorWithAuthFlow
+             * @param {Element} container - The container element where the asset selector will be rendered.
+             * @param {AssetSelectorProps} props - Props for the asset selector UI.
+             * @param {Function} callback - A callback function to be called when the UI is ready to be displayed.
+             */
+            PureJSSelectors.renderAssetSelectorWithAuthFlow(container, assetSelectorProps, () => {
+                const assetSelectorDialog = document.getElementById('asset-selector-dialog');
+                assetSelectorDialog.showModal();
+            });
+        }
+
+	</script>
+</head>
+<body>
+    <input type="color" id="html5colorpicker" onchange="colorChange()" onclick="setFocus()">
+    <button onclick="renderAssetSelectorWithImsFlow()">Asset Selector - Select Assets with Ims Flow</button>
+    <img src="https://delivery-p31359-e1338271.adobeaemcloud.com/adobe/assets/urn:aaid:aem:7091fd88-9d0f-4aa6-8bfb-2746ce1d815f/as/thumbnail.jpeg?preferwebp=true&accept-experimental&width=300" alt="Thumbnail Image" style="width: 300px; height: auto; margin-top: 20px;">
+    <script>
+        // initialise Field Extension
+        window.extensionField = {};
+        
+        // find color input element
+        var colorPickerElement = document.getElementById("html5colorpicker");
+        
+        ContentstackUIExtension.init().then(function(extension) {
+            // make extension object globally available
+            extensionField = extension;
+            
+            // update the field height 
+            extensionField.window.updateHeight(300);
+            
+            // Get current color field value from Contentstack and update the color picker input element
+            colorPickerElement.value = extensionField.field.getData();
+        })
+        
+        // on click of element we will set setFocus on field
+        function setFocus(){
+            extensionField.field.setFocus();
+        }
+        
+        // On color change event, pass new value to Contentstack
+        function colorChange(){
+            extensionField.field.setData(colorPickerElement.value);
+        }
+        
+    </script>
+</body>
+</html>
